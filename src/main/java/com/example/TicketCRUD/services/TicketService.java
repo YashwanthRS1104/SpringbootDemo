@@ -3,6 +3,7 @@ package com.example.TicketCRUD.services;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import com.example.TicketCRUD.entities.Ticket;
 import org.springframework.stereotype.Service;
@@ -64,35 +65,51 @@ public class TicketService {
 	public String createTicket(TicketVo vo) {
 		Ticket ticket = voToTicket(vo);
 		ticketRepository.save(ticket);
-		return "Created ticket succesfully";
+		return "Created ticket successfully";
 	}
 
 	@Transactional
 	public TicketVo viewTicket(Long id) {
-		Ticket ticket = ticketRepository.findById(id).get();
+		Optional<Ticket> optionalTicket = ticketRepository.findById(id);
+		Ticket ticket = null;
+
+		if(optionalTicket.isPresent())
+			ticket = optionalTicket.get();
+
 		if(ticket == null) return null;
 		return ticketToVo(ticket);
 	}
 
 	@Transactional
 	public String updateTicket(Long id, String newName, String newDesc) {
-		Ticket ticket = ticketRepository.findById(id).get();
-		if(ticket == null) return null;
+		Optional<Ticket> optionalTicket = ticketRepository.findById(id);
+		Ticket ticket = null;
+
+		if(optionalTicket.isPresent())
+			ticket = optionalTicket.get();
+
+		if(ticket == null)
+			return "Could not find the ticket";
 
 		Ticket updatedTicket = updateTicket(ticket, newName, newDesc);
 
 		ticketRepository.save(updatedTicket);
-		return "Updated ticket succesfully";
+		return "Updated ticket successfully";
 	}
 
 	@Transactional
 	public String deleteTicket(Long id) {
-		Ticket ticket = ticketRepository.findById(id).get();
+		Optional<Ticket> optionalTicket = ticketRepository.findById(id);
+		Ticket ticket = null;
+
+		if(optionalTicket.isPresent())
+			ticket = optionalTicket.get();
+
 		if(ticket == null)
 			return "Could not find ticket";
 
 		ticketRepository.deleteById(id);
 
-		return "Deleted Succesfully";
+		return "Deleted Successfully";
 	}
 }
