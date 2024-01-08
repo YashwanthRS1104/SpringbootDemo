@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.TicketCRUD.repository.TicketRepository;
 import com.example.TicketCRUD.vos.TicketVo;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TicketService {
@@ -36,6 +37,7 @@ public class TicketService {
 				.build();
 	}
 
+	@Transactional
 	private Ticket updateTicket(Ticket ticket, String newName, String newDesc) {
 		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 		return Ticket.builder()
@@ -49,6 +51,7 @@ public class TicketService {
 				.build();
 	}
 
+	@Transactional
 	public List<TicketVo> getAllTickets() {
 		List<Ticket> ticketList = ticketRepository.findAll();
 		List<TicketVo> ticketVoList = new ArrayList<>();
@@ -57,18 +60,21 @@ public class TicketService {
 		return ticketVoList;
 	}
 
+	@Transactional
 	public String createTicket(TicketVo vo) {
 		Ticket ticket = voToTicket(vo);
 		ticketRepository.save(ticket);
 		return "Created ticket succesfully";
 	}
 
+	@Transactional
 	public TicketVo viewTicket(Long id) {
 		Ticket ticket = ticketRepository.findById(id).get();
 		if(ticket == null) return null;
 		return ticketToVo(ticket);
 	}
 
+	@Transactional
 	public String updateTicket(Long id, String newName, String newDesc) {
 		Ticket ticket = ticketRepository.findById(id).get();
 		if(ticket == null) return null;
@@ -79,6 +85,7 @@ public class TicketService {
 		return "Updated ticket succesfully";
 	}
 
+	@Transactional
 	public String deleteTicket(Long id) {
 		Ticket ticket = ticketRepository.findById(id).get();
 		if(ticket == null)
