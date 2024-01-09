@@ -1,10 +1,12 @@
 spring:
+  #DB Config
   datasource:
     url: jdbc:mysql://localhost:3306/demodb
     username: root
     password: AA123@gmail.com
     driver-class-name: com.mysql.cj.jdbc.Driver
 
+  #JPA Config
   jpa:
     hibernate:
       ddl-auto: update
@@ -12,5 +14,14 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
+
+  #Mockito Config
   mockito:
     mock-maker=mock-maker-inline:
+
+  # Redis Config
+  cache:
+    type=redis
+  redis:
+    host=localhost
+    port=6379

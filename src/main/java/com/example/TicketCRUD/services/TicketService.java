@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Optional;
 
 import com.example.TicketCRUD.entities.Ticket;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
 import com.example.TicketCRUD.repository.TicketRepository;
@@ -52,6 +55,7 @@ public class TicketService {
 				.build();
 	}
 
+	@Cacheable(value = "tickets")
 	@Transactional
 	public List<TicketVo> getAllTickets() {
 		List<Ticket> ticketList = ticketRepository.findAll();
@@ -61,6 +65,7 @@ public class TicketService {
 		return ticketVoList;
 	}
 
+	@CacheEvict(value = "tickets", allEntries = true)
 	@Transactional
 	public String createTicket(TicketVo vo) {
 		Ticket ticket = voToTicket(vo);
@@ -68,6 +73,7 @@ public class TicketService {
 		return "Created ticket successfully";
 	}
 
+	@Cacheable(value = "ticket", key = "#id")
 	@Transactional
 	public TicketVo viewTicket(Long id) {
 		Optional<Ticket> optionalTicket = ticketRepository.findById(id);
@@ -80,6 +86,11 @@ public class TicketService {
 		return ticketToVo(ticket);
 	}
 
+
+	@Caching(evict = {
+			@CacheEvict(value = "tickets", allEntries = true),
+			@CacheEvict(value = "ticket", key = "#id")
+	})
 	@Transactional
 	public String updateTicket(Long id, String newName, String newDesc) {
 		Optional<Ticket> optionalTicket = ticketRepository.findById(id);
@@ -97,6 +108,10 @@ public class TicketService {
 		return "Updated ticket successfully";
 	}
 
+	@Caching(evict = {
+			@CacheEvict(value = "tickets", allEntries = true),
+			@CacheEvict(value = "ticket", key = "#id")
+	})
 	@Transactional
 	public String deleteTicket(Long id) {
 		Optional<Ticket> optionalTicket = ticketRepository.findById(id);
