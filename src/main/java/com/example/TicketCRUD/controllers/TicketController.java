@@ -42,4 +42,9 @@ public class TicketController {
 	public String deleteTicket(@PathVariable("id") Long id) {
 		return ticketService.deleteTicket(id);
 	}
+
+	@PostMapping("clear-cache")
+	public String deleteCache() {
+		return ticketService.deleteCache();
+	}
 }

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.example.TicketCRUD.entities.Ticket;
+import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
@@ -20,8 +21,11 @@ public class TicketService {
 
 	private TicketRepository ticketRepository;
 
-	public TicketService(TicketRepository ticketRepository){
+	private CacheManager cacheManager;
+
+	public TicketService(TicketRepository ticketRepository, CacheManager cacheManager){
 		this.ticketRepository = ticketRepository;
+		this.cacheManager = cacheManager;
 	}
 
 	private Ticket voToTicket(TicketVo vo) {
@@ -73,7 +77,7 @@ public class TicketService {
 		return "Created ticket successfully";
 	}
 
-	@Cacheable(value = "ticket", key = "#id")
+	@Cacheable(value = "ticket", key = "#id", unless = "#result == null")
 	@Transactional
 	public TicketVo viewTicket(Long id) {
 		Optional<Ticket> optionalTicket = ticketRepository.findById(id);
@@ -126,5 +130,16 @@ public class TicketService {
 		ticketRepository.deleteById(id);
 
 		return "Deleted Successfully";
+	}
+
+//	@Caching(evict = {
+//			@CacheEvict(value = "tickets", allEntries = true),
+//			@CacheEvict(value = "ticket", allEntries = true)
+//	})
+	@Transactional
+	public String deleteCache(){
+		cacheManager.getCache("tickets").clear();
+		cacheManager.getCache("ticket").clear();
+		return "Cache deleted successfully";
 	}
 }

@@ -19,9 +19,12 @@ spring:
   mockito:
     mock-maker=mock-maker-inline:
 
-  # Redis Config
-  cache:
-    type=redis
-  redis:
-    host=localhost
-    port=6379
+#  # Redis Config
+#  cache:
+#    type=redis
+#  redis:
+#    host=localhost
+#    port=6379
+
+  custom:
+    url: "localhost:6380"
